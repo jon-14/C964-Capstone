@@ -19,6 +19,7 @@ percent_fraud_by_merchant_type = percent_fraud_by_merchant_type.sort_values(asce
 print(percent_fraud_by_merchant_type)
 percent_fraud_by_merchant_type.plot(x='merchant_type', kind='bar')
 plt.show()
+
 # VISUALIZATION 2 - Line Plot: Fraud Count by Month
 
 # VISUALIZATION 3 - Correlation Matrix
