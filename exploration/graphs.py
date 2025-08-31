@@ -1,8 +1,15 @@
 import numpy
 import pandas
 import matplotlib.pyplot as plt
+import scipy
 
 transaction_data = pandas.read_csv('data/raw_data.csv')
+avg_amount_by_customer = transaction_data.groupby('client_id')['transaction_amount'].mean()
+
+# Add customers' average transaction amount to transaction_data as new column
+transaction_data = pandas.merge(transaction_data, avg_amount_by_customer, on = 'client_id', how = 'left')
+transaction_data = transaction_data.rename(columns = {'transaction_amount_y': 'avg_transaction_amount'})
+print(transaction_data)
 
 # Convert timestamp column to datetime
 transaction_data['timestamp'] = pandas.to_datetime(transaction_data['timestamp'])
@@ -17,7 +24,8 @@ percent_fraud_by_merchant_type = fraud_count_by_merchant_type / transaction_coun
 
 percent_fraud_by_merchant_type = percent_fraud_by_merchant_type.sort_values(ascending = False)
 percent_fraud_by_merchant_type.plot(x='merchant_type', kind='bar')
-plt.show()
+#@TODO: uncomment plot when ready to share
+#plt.show()
 
 # VISUALIZATION 2 - Line Plot: Fraud Count by Month
 fraud_count_by_month = fraud_transactions.groupby(fraud_transactions['timestamp'].dt.month)['Fraud_Label'].sum() # https://www.statology.org/pandas-group-by-month/
@@ -25,6 +33,9 @@ transaction_count_by_month = transaction_data.groupby(transaction_data['timestam
 percent_fraud_by_month = fraud_count_by_month / transaction_count_by_month
 
 percent_fraud_by_month.plot(x = 'timestamp')
-plt.show()
+# @TODO: uncomment plot when ready to share
+#plt.show() 
 
 # VISUALIZATION 3 - Correlation Matrix
+columns = transaction_data.columns
+print(columns)
