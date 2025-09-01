@@ -1,7 +1,7 @@
 import numpy
 import pandas
 import matplotlib.pyplot as plt
-import scipy
+import scipy.stats as stats
 
 transaction_data = pandas.read_csv('data/raw_data.csv')
 avg_amount_by_customer = transaction_data.groupby('client_id')['transaction_amount'].mean()
@@ -9,7 +9,6 @@ avg_amount_by_customer = transaction_data.groupby('client_id')['transaction_amou
 # Add customers' average transaction amount to transaction_data as new column
 transaction_data = pandas.merge(transaction_data, avg_amount_by_customer, on = 'client_id', how = 'left')
 transaction_data = transaction_data.rename(columns = {'transaction_amount_y': 'avg_transaction_amount'})
-print(transaction_data)
 
 # Convert timestamp column to datetime
 transaction_data['timestamp'] = pandas.to_datetime(transaction_data['timestamp'])
@@ -38,4 +37,9 @@ percent_fraud_by_month.plot(x = 'timestamp')
 
 # VISUALIZATION 3 - Correlation Matrix
 columns = transaction_data.columns
-print(columns)
+parameters = ['transaction_amount_x', 'credit_limit', 'avg_transaction_amount']
+print(transaction_data[['client_id', 'Fraud_Label', 'merchant_type', 'transaction_type']])
+
+print(transaction_data.shape)
+transaction_data.dropna(how='any', axis=0)
+print(transaction_data.shape)
