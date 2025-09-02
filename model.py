@@ -21,8 +21,8 @@ transaction_data = td.import_from_csv()
 y = transaction_data['Fraud_Label']
 
 # Independend variables
-parameters = ['transaction_amount', 'credit_limit',
-       'avg_transaction_amount', 'transaction_average_ratio',
+'''parameters = ['transaction_amount', 'credit_limit',
+       'transaction_average_ratio',
        'merchant_type_Clothing', 'merchant_type_Electronics',
        'merchant_type_Entertainment', 'merchant_type_Gas Station',
        'merchant_type_Grocery', 'merchant_type_Health',
@@ -30,11 +30,20 @@ parameters = ['transaction_amount', 'credit_limit',
        'merchant_type_Restaurant', 'merchant_type_Utilities',
        'transaction_type_Digital Wallet', 'transaction_type_Online',
        'transaction_type_POS', 'currency_CDN', 'currency_EURO', 'currency_JPN',
-       'currency_RMB', 'currency_USD']
+       'currency_RMB', 'currency_USD']'''
+parameters = ['transaction_amount',
+       'transaction_average_ratio',
+       'merchant_type_Clothing', 'merchant_type_Electronics',
+       'merchant_type_Entertainment', 'merchant_type_Gas Station',
+       'merchant_type_Grocery', 'merchant_type_Health',
+       'merchant_type_Online Retail', 'merchant_type_Online Stores',
+       'merchant_type_Restaurant', 'merchant_type_Utilities',
+       'transaction_type_Digital Wallet', 'transaction_type_Online',
+       'transaction_type_POS']
 X = transaction_data[parameters]
 
 # Train the model
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.01, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, stratify=y)
 
 # Create the model
 logistic_regression_model = LogisticRegression(max_iter=150000)

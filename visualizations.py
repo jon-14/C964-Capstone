@@ -8,11 +8,7 @@ def fraud_rate_bar_graph(category: str):
     transaction_count_by_category = transaction_data.groupby(f'{category}')['transaction_id'].count()
     percent_fraud_by_category = fraud_count_by_category / transaction_count_by_category
     percent_fraud_by_category.sort_values(ascending=False, inplace=True)
-    percent_fraud_by_category.plot(x=f'{category}', kind='bar', title=f'Fraud Rate by {category}')
-
-    # Add value above each bar
-    
-
+    percent_fraud_by_category.plot(x=f'{category}', kind='bar', title=f'Fraud Rate by {category}')    
     plt.tight_layout()
     plt.show()
 
