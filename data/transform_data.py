@@ -40,4 +40,7 @@ def import_from_csv():
     one_hot_encoding = pandas.get_dummies(transaction_data[categories]).astype(float)
     transaction_data = transaction_data.join(one_hot_encoding)
     
+    # Replace any NaN values created from expanding average or one-hot encoding with 0
+    transaction_data.fillna(0, inplace=True)
+
     return transaction_data

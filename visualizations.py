@@ -6,6 +6,10 @@ import seaborn as sb
 transaction_data = td.import_from_csv()
 fraud_transactions = transaction_data[transaction_data['Fraud_Label'] == 1]
 
+# VISUALIZATION 0 - Percent of fraudulent transactions
+percent_fraudulent = 100 * len(fraud_transactions) / len(transaction_data)
+print(percent_fraudulent)
+
 # VISUALIZATION 1 - Bar Graph: Fraud Rate by Merchant Type
 fraud_count_by_merchant_type = fraud_transactions.groupby(fraud_transactions['merchant_type'])['Fraud_Label'].sum()
 transaction_count_by_merchant_type = transaction_data.groupby('merchant_type')['transaction_id'].count()
@@ -25,7 +29,7 @@ percent_fraud_by_month.plot(x = 'timestamp', title="Fraud Rate by Month")
 plt.show()'''
 
 # VISUALIZATION 3 - Correlation Matrix - numerical parameters only
-parameters = ['transaction_amount_x', 'Fraud_Label', 'credit_limit', 'avg_transaction_amount', 'transaction_average_ratio']
+parameters = ['transaction_amount', 'Fraud_Label', 'credit_limit', 'avg_transaction_amount', 'transaction_average_ratio']
 corr_matrix = transaction_data[parameters].corr()
 
 # VISUALIZATION 4 - Bar Graph: Fraud Rate by Transaction Type
