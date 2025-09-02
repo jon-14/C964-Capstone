@@ -1,5 +1,6 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
 import data.transform_data as td
 
 transaction_data = td.import_from_csv()
@@ -20,7 +21,7 @@ transaction_data = td.import_from_csv()
 y = transaction_data['Fraud_Label']
 
 # Independend variables
-parameters = ['transaction_amount', 'Fraud_Label', 'credit_limit',
+parameters = ['transaction_amount', 'credit_limit',
        'avg_transaction_amount', 'transaction_average_ratio',
        'merchant_type_Clothing', 'merchant_type_Electronics',
        'merchant_type_Entertainment', 'merchant_type_Gas Station',
@@ -33,7 +34,7 @@ parameters = ['transaction_amount', 'Fraud_Label', 'credit_limit',
 X = transaction_data[parameters]
 
 # Train the model
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.01, stratify=y)
 
 # Create the model
 logistic_regression_model = LogisticRegression(max_iter=150000)
@@ -42,7 +43,5 @@ logistic_regression_model.fit(X_train, y_train)
 # Make predictions 
 y_prediction = logistic_regression_model.predict(X_test)
 fraud_count = 0
-for x in y_prediction:
-    if x == 1:
-        fraud_count += 1
-print(fraud_count)
+
+print(mean_squared_error(y_test, y_prediction))
