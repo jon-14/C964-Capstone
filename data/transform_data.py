@@ -10,6 +10,7 @@ def import_from_csv():
         * Add derived fields
             - Average transaction amount by customer
             - Transaction-to-Average ratio (transaction amount / average transaction amount)
+            - One-hot encoding for categorical parameters
     Input: none
     Returns: transaction_data (dataframe)
     """
@@ -23,11 +24,20 @@ def import_from_csv():
     transaction_data['timestamp'] = pandas.to_datetime(transaction_data['timestamp'])
 
     # Add new column -- avg_transaction_amount (customers' average transaction amount by client_id)
-    avg_amount_by_customer = transaction_data.groupby('client_id')['transaction_amount'].mean()
-    transaction_data = pandas.merge(transaction_data, avg_amount_by_customer, on = 'client_id', how = 'left')
-    transaction_data = transaction_data.rename(columns = {'transaction_amount_y': 'avg_transaction_amount'})
+    #   https://stackoverflow.com/questions/56799202/pandas-groupby-and-cumulative-mean-of-previous-rows-in-group
+    transaction_data['avg_transaction_amount'] = (
+        transaction_data
+            .groupby('client_id')['transaction_amount']
+            .transform(lambda x: x.shift().expanding().mean()))
 
     # Add new column - transaction_average_ratio (transaction amount by customer's average transaction amount)
-    transaction_data['transaction_average_ratio'] = transaction_data['transaction_amount_x'] / transaction_data['avg_transaction_amount']
+    transaction_data['transaction_average_ratio'] = transaction_data['transaction_amount'] / transaction_data['avg_transaction_amount']
 
+    # One-hot encode categorical variables (merchant_type, transaction_type, currency) 
+    #   https://machinelearningmastery.com/why-one-hot-encode-data-in-machine-learning/
+    #   https://stackoverflow.com/questions/37292872/how-can-i-one-hot-encode-in-python
+    categories = ['merchant_type', 'transaction_type', 'currency']
+    one_hot_encoding = pandas.get_dummies(transaction_data[categories]).astype(float)
+    transaction_data = transaction_data.join(one_hot_encoding)
+    
     return transaction_data
