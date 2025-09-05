@@ -12,6 +12,13 @@ def fraud_rate_bar_graph(category: str):
     plt.tight_layout()
     plt.show()
 
+def transaction_rate_bar_graph(category: str):
+    transaction_count_by_category = transaction_data.groupby(f'{category}')['transaction_id'].count()
+    transaction_count_by_category.sort_values(ascending=False, inplace=True)
+    transaction_count_by_category.plot(x=f'{category}', kind='bar', title=f'Transaction Count by {category}')
+    plt.tight_layout()
+    plt.show()
+
 transaction_data = td.import_from_csv()
 fraud_transactions = transaction_data[transaction_data['Fraud_Label'] == 1]
 
@@ -42,3 +49,4 @@ corr_matrix = transaction_data[parameters].corr()
 print(transaction_data.columns)
 for x in ['merchant_type', 'transaction_type', 'currency', 'city', 'Fraud_Label']:
     fraud_rate_bar_graph(x)
+    transaction_rate_bar_graph(x)
