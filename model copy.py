@@ -4,6 +4,7 @@ from sklearn import metrics
 import data.transform_data as td
 import pandas as pd
 
+# How to drop columns from a dataframe that are in another dataframe - merge the dataframes and keep left only https://dnmtechs.com/deleting-rows-from-a-pandas-data-frame-based-on-another-data-frame/#google_vignette
 
 transaction_data = td.import_from_csv()
 '''all_columns = ['client_id', 'transaction_id', 'timestamp', 'transaction_amount',
@@ -19,36 +20,59 @@ transaction_data = td.import_from_csv()
        'transaction_type_POS', 'currency_CDN', 'currency_EURO', 'currency_JPN',
        'currency_RMB', 'currency_USD']'''
 
-# Dependend variable
-y = transaction_data['Fraud_Label']
+all_fraud_transactions = transaction_data[transaction_data['Fraud_Label'] == 1]
+all_real_transactions = transaction_data[transaction_data['Fraud_Label'] == 0]
 
-# Independend variables
+
+fraud_transactions_train = all_fraud_transactions.head(1000)
+fraud_transactions_test = pd.merge(all_fraud_transactions, fraud_transactions_train, on='transaction_id', how='left', indicator=True) 
+fraud_transactions_test = fraud_transactions_test[fraud_transactions_test['_merge'] == 'left_only']
+fraud_transactions_test.set_axis(['client_id', 'transaction_id', 'timestamp', 'transaction_amount',
+       'merchant_type', 'transaction_type', 'currency', 'city',
+       'email_address', 'Fraud_Label', 'credit_limit',
+       'avg_transaction_amount', 'transaction_average_ratio',
+       'merchant_type_Clothing', 'merchant_type_Electronics',
+       'merchant_type_Entertainment', 'merchant_type_Gas Station',
+       'merchant_type_Grocery', 'merchant_type_Health',
+       'merchant_type_Online Retail', 'merchant_type_Online Stores',
+       'merchant_type_Restaurant', 'merchant_type_Utilities',
+       'transaction_type_Digital Wallet', 'transaction_type_Online',
+       'transaction_type_POS', 'currency_CDN', 'currency_EURO', 'currency_JPN',
+       'currency_RMB', 'currency_USD'], axis='columns')
+
+real_transactions_train = all_real_transactions.head(1000)
+real_transactions_test = pd.merge(all_real_transactions, real_transactions_train, on='transaction_id', how='left', indicator=True) 
+real_transactions_test = real_transactions_test[real_transactions_test['_merge'] == 'left_only']
+
+X_train = pd.concat([fraud_transactions_train, real_transactions_train])
+X_test = pd.concat([fraud_transactions_test, real_transactions_test])
+
+print(X_train.columns)
+print(X_test.columns)
+
+y_train = X_train['Fraud_Label']
+y_test = X_test['Fraud_Label']
+
+# Choose independent parameters
 parameters = [
     'transaction_amount',
     'credit_limit',
-    'avg_transaction_amount', 
-    'transaction_average_ratio',
+    #'avg_transaction_amount', 
+    #'transaction_average_ratio',
     'merchant_type_Clothing', 'merchant_type_Electronics', 'merchant_type_Entertainment', 'merchant_type_Gas Station', 'merchant_type_Grocery', 'merchant_type_Health', 'merchant_type_Online Retail', 'merchant_type_Online Stores', 'merchant_type_Restaurant', 'merchant_type_Utilities',
-    'transaction_type_Digital Wallet', 'transaction_type_Online', 'transaction_type_POS', 
-    #'currency_CDN', 'currency_EURO', 'currency_JPN', 'currency_RMB', 'currency_USD'
+    #'transaction_type_Digital Wallet', 'transaction_type_Online', 'transaction_type_POS', 
+    'currency_CDN', 'currency_EURO', 'currency_JPN', 'currency_RMB', 'currency_USD'
     ]
-X = transaction_data[parameters]
 
-# Split X, y into training data and test data
-X_train, X_test, y_train, y_test = train_test_split(X, y, train_size = 0.3, stratify=y, random_state=7)
+X_train = X_train[parameters]
+X_test = X_test[parameters]
 
 # Create the model
-logistic_regression_model = LogisticRegression(random_state=10, max_iter=100000)
+logistic_regression_model = LogisticRegression(random_state=10, max_iter=1000)
 logistic_regression_model.fit(X_train, y_train)
 
 # Make predictions 
 y_prediction = logistic_regression_model.predict(X_test)
-
-y_prediction_i = logistic_regression_model.predict([[1000, 1000, 300]])
-print(y_prediction_i)
-# Make a single prediction
-#def predict_transaction(transaction_amount, credit_limit, avg_transaction_amount, merchant_type, transaction_type, currency):
-    
 
 y_pred_list = list(y_prediction)
 y_test_list = list(y_test)

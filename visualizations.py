@@ -50,3 +50,5 @@ print(transaction_data.columns)
 for x in ['merchant_type', 'transaction_type', 'currency', 'city', 'Fraud_Label']:
     fraud_rate_bar_graph(x)
     transaction_rate_bar_graph(x)
+
+# Other analysis
