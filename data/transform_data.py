@@ -36,7 +36,7 @@ def import_from_csv():
     # One-hot encode categorical variables (merchant_type, transaction_type, currency) 
     #   https://machinelearningmastery.com/why-one-hot-encode-data-in-machine-learning/
     #   https://stackoverflow.com/questions/37292872/how-can-i-one-hot-encode-in-python
-    categories = ['merchant_type', 'transaction_type', 'currency']
+    categories = ['merchant_type', 'transaction_type', 'currency', 'city']
     one_hot_encoding = pandas.get_dummies(transaction_data[categories]).astype(float)
     transaction_data = transaction_data.join(one_hot_encoding)
     
