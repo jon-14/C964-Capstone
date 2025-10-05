@@ -8,4 +8,4 @@ Please see <em>fraud_detection_notebook.ipynb</em> for an overview of the develo
 I used the following synthetic dataset for training and testing the model:
 Synthetic Fraud Dataset_Medium by Jisong Xiao, https://www.kaggle.com/datasets/jisongxiao/synthetic-fraud-dataset-medium
 
-
+Note: This project was developed using a virtual environment. If you happen to try running the notebook on your local machine, I recommend following the instructions in <em>UserGuide.pdf</em>. 
